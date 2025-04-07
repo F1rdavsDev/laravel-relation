@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PostUpdateRequest;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -78,10 +79,13 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */ 
-    public function update(Request $request, string $id)
+    public function update(PostUpdateRequest $request, string $id)
     {
-
         $post = Post::findOrFail($id);  
+        
+        if ($post->user_id !== auth()->id()) {
+            return redirect()->route('posts.index');
+        }
     if ($request->hasFile('image')) {
         if ($post->image && file_exists(public_path('storage/' . $post->image))) {
             unlink(public_path('storage/' . $post->image));  
@@ -95,9 +99,6 @@ class PostController extends Controller
         'content' => $request->content,
     ]);
 
-    if ($post->user_id !== auth()->id()) {
-        return redirect()->route('posts.index');
-    }
     
 
 
