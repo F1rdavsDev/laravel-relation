@@ -95,6 +95,12 @@ class PostController extends Controller
         'content' => $request->content,
     ]);
 
+    if ($post->user_id !== auth()->id()) {
+        return redirect()->route('posts.index');
+    }
+    
+
+
 
         return redirect()->route('posts.index');
     }
