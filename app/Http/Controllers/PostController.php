@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\PostUpdateRequest;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\PostStoreRequest;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\PostCreateRequest;
+use App\Http\Requests\PostUpdateRequest;
 
 class PostController extends Controller
 {
@@ -34,7 +35,7 @@ class PostController extends Controller
      * 
      * Store a newly created resource in storage.
      */
-    public function store(PostCreateRequest $request)
+    public function store(PostStoreRequest $request)
     {
        
         if ($request->hasFile('image')) {
@@ -111,6 +112,9 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
 {
+    if (Auth::id() !== $post->user_id) {
+        return redirect()->route('posts.index');
+    }
 
     // Rasmni o‘chirish
     if ($post->image) {
